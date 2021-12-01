@@ -1,0 +1,61 @@
+{
+  "name": "default_config",
+  "n_gpu": 1,
+  "preprocessing": {
+    "sr": 22050
+  },
+  "arch": {
+    "type": "FastSpeech",
+    "args": {
+      "n_layers": 6,
+      "vocabulary_size": 38,
+      "hidden_size": 384,
+      "attn_heads": 2,
+      "cnn_out_channels": 1536,
+      "kernel_size": 3,
+      "p": 0.1,
+      "n_mels": 80,
+      "groups": 1
+    }
+  },
+  "data": {
+    "train": {
+      "batch_size": 16,
+      "num_workers": 5
+    },
+    "val": {
+      "batch_size": 16,
+      "num_workers": 5
+    }
+  },
+  "optimizer": {
+    "type": "Adam",
+    "args": {
+      "lr": 3e-4,
+      "betas": [0.9, 0.98]
+    }
+  },
+  "loss": {
+    "type": "MSELoss",
+    "args": {}
+  },
+  "lr_scheduler": {
+    "type": "StepLR",
+    "args": {
+      "step_size": 10000,
+      "gamma": 1
+    }
+  },
+  "trainer": {
+    "epochs": 20,
+    "save_dir": "saved/",
+    "save_period": 5,
+    "verbosity": 2,
+    "monitor": "min val_loss",
+    "early_stop": 100,
+    "writer": "wandb",
+    "project_name": "tts",
+    "len_epoch": 100,
+    "grad_norm_clip": 10
+  }
+}
