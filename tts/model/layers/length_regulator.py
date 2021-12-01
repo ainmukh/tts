@@ -9,7 +9,7 @@ class LengthRegulator(nn.Module):
         self.duration_predictor = DurationPredictor(groups)
         self.silence_token = torch.Tensor([-11.5129251] * emb_size)
 
-    def forward(self, batch, phoneme, durations=None):
+    def forward(self, phoneme, batch, durations=None):
         # add silence to the end of the phoneme
         # phoneme = batch.phoneme
         silence = self.silence_token.broadcast_to(phoneme.size(0), 1, -1).to(device=phoneme.device)
