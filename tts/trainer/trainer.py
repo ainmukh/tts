@@ -62,7 +62,7 @@ class Trainer(BaseTrainer):
         """
         # TODO
         for tensor_for_gpu in [
-            "token",
+            "tokens",
             "text_encoded"
         ]:
             batch.__dict__[tensor_for_gpu] = batch.__dict__[tensor_for_gpu].to(device)
@@ -74,8 +74,9 @@ class Trainer(BaseTrainer):
                 self.model.parameters(), self.config["trainer"]["grad_norm_clip"]
             )
 
-    def _train_iteration(self, batch: dict, epoch: int, batch_num: int):
-        batch = self.move_batch_to_device(batch, self.device)
+    def _train_iteration(self, batch, epoch: int, batch_num: int):
+        # batch = self.move_batch_to_device(batch, self.device)
+        batch = batch.to(self.device)
         self.optimizer.zero_grad()
         batch = self.model(batch)
 
@@ -149,7 +150,8 @@ class Trainer(BaseTrainer):
                     enumerate(self.valid_data_loader), desc="validation",
                     total=len(self.valid_data_loader)
             ):
-                batch = self.move_batch_to_device(batch, self.device)
+                # batch = self.move_batch_to_device(batch, self.device)
+                batch = batch.to(self.device)
                 batch = self.model(batch)
 
                 batch.audio = self.vocoder.inference(batch.melspec_preds)

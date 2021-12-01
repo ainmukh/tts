@@ -17,6 +17,7 @@ class Batch:
     token_lengths: torch.Tensor
     melspec_pred: Optional[torch.Tensor] = None
     durations_pred: Optional[torch.Tensor] = None
+    phoneme: Optional[torch.Tensor] = None
 
     def to(self, device: torch.device) -> 'Batch':
         for key, value in self.__dict__.items():

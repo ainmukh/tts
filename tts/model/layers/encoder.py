@@ -17,7 +17,7 @@ class Encoder(nn.Module):
         ])
 
     def forward(self, batch):
-        x = self.embedding(batch.phoneme)
+        x = self.embedding(batch.tokens)
 
         for i, layer in enumerate(self.layers):
             x, attn = layer(x)

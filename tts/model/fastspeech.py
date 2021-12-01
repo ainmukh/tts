@@ -27,7 +27,8 @@ class FastSpeech(nn.Module):
         # phoneme = self.encoder(phoneme)
         batch = self.encoder(batch)
 
-        phoneme, durations_pred = self.length_regulator(batch.phoneme, batch.durations)
+        phoneme, durations_pred = self.length_regulator(batch.phoneme, batch, batch.durations)
+        batch.phoneme = phoneme
         batch.durations_pred = durations_pred
 
         # mel_spectrogram = self.decoder(phoneme)

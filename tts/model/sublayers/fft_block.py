@@ -20,7 +20,7 @@ class FFTBlock(nn.Module):
         res = self.ln1(att + hiddens)
         res = self.dropout(res)
 
-        conv_out = self.conv(res)
+        conv_out = self.conv(res.transpose(-1, -2)).transpose(-1, -2)
         res = self.ln2(conv_out + res)
         res = self.dropout(res)
         return res, att
