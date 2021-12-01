@@ -14,7 +14,7 @@ class FastSpeech(nn.Module):
             n_layers, vocabulary_size, hidden_size, attn_heads, cnn_out_channels, kernel_size, p, groups
         )
 
-        self.length_regulator = LengthRegulator(hidden_size)
+        self.length_regulator = LengthRegulator(hidden_size, groups)
 
         self.decoder = Decoder(
             n_layers, hidden_size, attn_heads, cnn_out_channels, kernel_size, p, groups

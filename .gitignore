@@ -116,3 +116,4 @@ __MACOSX/
 
 .DS_Store
 tts/.DS_Store
+waveglow_256channels_universal_v5.pt

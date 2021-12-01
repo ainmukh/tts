@@ -4,9 +4,9 @@ from ..sublayers import DurationPredictor
 
 
 class LengthRegulator(nn.Module):
-    def __init__(self, emb_size: int):
+    def __init__(self, emb_size: int, groups: int):
         super().__init__()
-        self.duration_predictor = DurationPredictor()
+        self.duration_predictor = DurationPredictor(groups)
         self.silence_token = torch.Tensor([-11.5129251] * emb_size)
 
     def forward(self, phoneme, durations=None):
