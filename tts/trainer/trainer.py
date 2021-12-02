@@ -3,12 +3,14 @@ import random
 import PIL
 import torch
 from torch.nn.utils import clip_grad_norm_
+from torch.nn.utils.rnn import pad_sequence
 from torchvision.transforms import ToTensor
 from tqdm import tqdm
 
 from ..base import BaseTrainer
 from ..logger import plot_spectrogram_to_buf
 from ..utils import inf_loop, MetricTracker
+from ..collator import MelSpectrogram, MelSpectrogramConfig
 
 
 class Trainer(BaseTrainer):
@@ -35,6 +37,10 @@ class Trainer(BaseTrainer):
         self.skip_oom = skip_oom
         self.config = config
         self.data_loader = data_loader
+
+        self.melspec = MelSpectrogram(MelSpectrogramConfig()).to(device)
+        self.melspec_silence = -11.5129251
+
         if len_epoch is None:
             # epoch-based training
             self.len_epoch = len(self.data_loader)
@@ -77,6 +83,17 @@ class Trainer(BaseTrainer):
     def _train_iteration(self, batch, epoch: int, batch_num: int):
         # batch = self.move_batch_to_device(batch, self.device)
         batch = batch.to(self.device)
+        melspec = [
+            self.melspec(waveform_[0]) for waveform_ in batch.waveform
+        ]
+        melspec_length = torch.Tensor([melspec_.size(-1) for melspec_ in melspec])
+        melspec = pad_sequence([
+                melspec_.transpose(1, 0) for melspec_ in melspec
+        ], padding_value=self.melspec_silence)\
+            .transpose(1, 0).transpose(2, 1)
+        batch.melspec = melspec
+        batch.melspec_length = melspec_length
+
         self.optimizer.zero_grad()
         batch = self.model(batch)
 
@@ -157,7 +174,7 @@ class Trainer(BaseTrainer):
 
                 audio = []
                 for i in tqdm(range(batch.melspec_pred.size(0))):
-                    wav = self.vocoder.inference(batch.melspec_pred[i])
+                    wav = self.vocoder.inference(batch.melspec_pred[i].unsqueeze(0))
                     audio.append(wav)
                 batch.audio = torch.cat(audio, 0)
 

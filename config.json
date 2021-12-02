@@ -67,7 +67,7 @@
     }
   },
   "trainer": {
-    "epochs": 2,
+    "epochs": 20,
     "save_dir": "saved/",
     "save_period": 5,
     "verbosity": 2,
@@ -75,7 +75,7 @@
     "early_stop": 100,
     "writer": "wandb",
     "project_name": "tts",
-    "len_epoch": 10,
+    "len_epoch": 200,
     "grad_norm_clip": 10
   }
 }

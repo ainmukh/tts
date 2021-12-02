@@ -10,12 +10,12 @@ from ..aligner import GraphemeAligner
 class Batch:
     waveform: torch.Tensor
     waveform_length: torch.Tensor
-    melspec: torch.Tensor
-    melspec_length: torch.Tensor
     durations: torch.Tensor
     transcript: List[str]
     tokens: torch.Tensor
     token_lengths: torch.Tensor
+    melspec: Optional[torch.Tensor] = None
+    melspec_length: Optional[torch.Tensor] = None
     melspec_pred: Optional[torch.Tensor] = None
     durations_pred: Optional[torch.Tensor] = None
     phoneme: Optional[torch.Tensor] = None
@@ -33,7 +33,7 @@ class Batch:
 
 class LJSpeechCollator:
     def __init__(self):
-        self.melspec = MelSpectrogram(MelSpectrogramConfig())
+        # self.melspec = MelSpectrogram(MelSpectrogramConfig())
         self.aligner = GraphemeAligner()
         self.melspec_silence = -11.5129251
 
@@ -42,18 +42,18 @@ class LJSpeechCollator:
             zip(*instances)
         )
 
-        melspec = [
-            self.melspec(waveform_[0]) for waveform_ in waveform
-        ]
-        melspec_length = torch.Tensor([melspec_.size(-1) for melspec_ in melspec])
-        melspec = pad_sequence([
-            melspec_.transpose(1, 0) for melspec_ in melspec
-        ], padding_value=self.melspec_silence)\
-            .transpose(1, 0).transpose(2, 1)
+        # melspec = [
+        #     self.melspec(waveform_[0]) for waveform_ in waveform
+        # ]
+        # melspec_length = torch.Tensor([melspec_.size(-1) for melspec_ in melspec])
+        # melspec = pad_sequence([
+        #     melspec_.transpose(1, 0) for melspec_ in melspec
+        # ], padding_value=self.melspec_silence)\
+        #     .transpose(1, 0).transpose(2, 1)
 
         waveform = pad_sequence([
             waveform_[0] for waveform_ in waveform
-        ], padding_value=self.melspec_silence).transpose(0, 1)
+        ]).transpose(0, 1)
         waveform_length = torch.cat(waveforn_length)
 
         durations = self.aligner(
@@ -67,6 +67,7 @@ class LJSpeechCollator:
 
         return Batch(
             waveform, waveform_length,
-            melspec, melspec_length, durations,
+            # melspec, melspec_length,
+            durations,
             transcript, tokens, token_lengths
         )
