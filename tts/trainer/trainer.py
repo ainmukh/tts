@@ -170,8 +170,14 @@ class Trainer(BaseTrainer):
             for batch_idx, batch in enumerate(self.valid_data_loader):
                 # batch = self.move_batch_to_device(batch, self.device)
                 batch = batch.to(self.device)
+
                 melspec = self.melspec(batch.waveform)
+                durations = self.aligner(
+                    batch.waveform, batch.waveform_length, batch.transcript
+                ).to(self.device)
                 batch.melspec = melspec
+                batch.durations = durations
+
                 batch = self.model(batch)
 
                 audio = []
