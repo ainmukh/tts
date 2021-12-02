@@ -200,6 +200,10 @@ class Trainer(BaseTrainer):
             # self._log_attention(batch.attn)
             self._log_scalars(self.valid_metrics)
             self._log_audio(batch.audio, batch.transcript)
+
+        for name, p in self.model.named_parameters():
+            self.writer.add_histogram(name, p, bins="auto")
+
         return self.valid_metrics.result()
 
     def _progress(self, batch_idx):
