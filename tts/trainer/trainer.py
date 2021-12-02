@@ -89,7 +89,8 @@ class Trainer(BaseTrainer):
         batch = batch.to(self.device)
 
         melspec = self.melspec(batch.waveform)
-        plt.savefig(plt.imshow(melspec[0].cpu()))
+        fig = plt.imshow(batch.melspec[0].cpu())
+        fig.savefig('mel.png')
         durations = self.aligner(
             batch.waveform, batch.waveform_length, batch.transcript
         ).to(self.device)
@@ -98,7 +99,8 @@ class Trainer(BaseTrainer):
 
         self.optimizer.zero_grad()
         batch = self.model(batch)
-        plt.savefig(plt.imshow(batch.melspec[0].cpu()))
+        fig = plt.imshow(batch.melspec_pred[0].cpu())
+        fig.savefig('mel_p.png')
 
         melspec_loss, length_loss = self.criterion(batch)  # TODO
         loss = melspec_loss + length_loss
