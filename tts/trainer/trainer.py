@@ -90,7 +90,7 @@ class Trainer(BaseTrainer):
         melspec = self.melspec(batch.waveform)
         durations = self.aligner(
             batch.waveform, batch.waveform_length, batch.transcript
-        )
+        ).to(self.device)
         batch.melspec = melspec
         batch.durations = durations
 
