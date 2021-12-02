@@ -51,7 +51,7 @@ class Trainer(BaseTrainer):
             "melspec_loss", 'length_loss', "grad norm", writer=self.writer
         )
         self.valid_metrics = MetricTracker(
-            "melspec_loss", 'length_loss', writer=self.writer
+            "melspec_loss", 'length_loss', 'val_loss', writer=self.writer
         )
         self.sr = sr
 
@@ -146,24 +146,27 @@ class Trainer(BaseTrainer):
         self.vocoder.eval()
         self.valid_metrics.reset()
         with torch.no_grad():
-            for batch_idx, batch in tqdm(
-                    enumerate(self.valid_data_loader), desc="validation",
-                    total=len(self.valid_data_loader)
-            ):
+            # for batch_idx, batch in tqdm(
+            #         enumerate(self.valid_data_loader), desc="validation",
+            #         total=len(self.valid_data_loader)
+            # ):
+            for batch_idx, batch in enumerate(self.valid_data_loader):
                 # batch = self.move_batch_to_device(batch, self.device)
                 batch = batch.to(self.device)
                 batch = self.model(batch)
 
                 audio = []
-                for i in tqdm(range(batch.size(0))):
+                for i in tqdm(range(batch.melspec_pred.size(0))):
                     wav = self.vocoder.inference(batch.melspec_pred[i])
                     audio.append(wav)
                 batch.audio = torch.cat(audio, 0)
 
                 melspec_loss, length_loss = self.criterion(batch)
+                loss = melspec_loss + length_loss
 
-                self.valid_metrics.update('melspec_loss', melspec_loss.item(), n=len(batch.melspec_pred.size(0)))
-                self.valid_metrics.update('length_loss', length_loss.item(), n=len(batch.melspec_pred.size(0)))
+                self.valid_metrics.update('melspec_loss', melspec_loss.item(), n=batch.melspec_pred.size(0))
+                self.valid_metrics.update('length_loss', length_loss.item(), n=batch.melspec_pred.size(0))
+                self.valid_metrics.update('val_loss', loss.item(), n=batch.melspec_pred.size(0))
 
             self.writer.set_step(epoch * self.len_epoch, "valid")
             self._log_predictions(batch.melspec_pred, batch.transcript)
