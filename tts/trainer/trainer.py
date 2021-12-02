@@ -95,13 +95,8 @@ class Trainer(BaseTrainer):
         batch.melspec = melspec
         batch.durations = durations
 
-        fig = plt.imshow(batch.melspec[0].cpu())
-        fig.savefig('mel.png')
-
         self.optimizer.zero_grad()
         batch = self.model(batch)
-        fig = plt.imshow(batch.melspec_pred[0].cpu())
-        fig.savefig('mel_p.png')
 
         melspec_loss, length_loss = self.criterion(batch)  # TODO
         loss = melspec_loss + length_loss
