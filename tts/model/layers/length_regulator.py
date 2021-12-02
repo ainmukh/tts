@@ -20,7 +20,7 @@ class LengthRegulator(nn.Module):
         phoneme = torch.cat((phoneme, silence), 1)
 
         if not self.training:
-            durations = durations_pred
+            durations = torch.expm1(durations_pred)
         else:
             durations = batch.durations
 
