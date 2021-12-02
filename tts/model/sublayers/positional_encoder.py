@@ -15,4 +15,6 @@ class PositionalEncoder(nn.Module):
         self.register_buffer('pe', pe)
 
     def forward(self, x):
-        return x + self.pe[:, :, :x.size(2)]
+        x = x.transpose(-1, -2)
+        x = x + self.pe[:, :, :x.size(2)]
+        return x.transpose(-1, -2)
