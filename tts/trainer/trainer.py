@@ -89,13 +89,14 @@ class Trainer(BaseTrainer):
         batch = batch.to(self.device)
 
         melspec = self.melspec(batch.waveform)
-        fig = plt.imshow(batch.melspec[0].cpu())
-        fig.savefig('mel.png')
         durations = self.aligner(
             batch.waveform, batch.waveform_length, batch.transcript
         ).to(self.device)
         batch.melspec = melspec
         batch.durations = durations
+
+        fig = plt.imshow(batch.melspec[0].cpu())
+        fig.savefig('mel.png')
 
         self.optimizer.zero_grad()
         batch = self.model(batch)
