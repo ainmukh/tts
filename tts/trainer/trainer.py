@@ -55,7 +55,7 @@ class Trainer(BaseTrainer):
         self.valid_data_loader = valid_data_loader
         self.do_validation = self.valid_data_loader is not None
         self.lr_scheduler = lr_scheduler
-        self.log_step = 10
+        self.log_step = 1
 
         self.train_metrics = MetricTracker(
             "melspec_loss", 'length_loss', "grad norm", writer=self.writer
@@ -94,6 +94,7 @@ class Trainer(BaseTrainer):
         ).to(self.device)
         batch.melspec = melspec
         batch.durations = durations
+        print(batch.melspec[0])
 
         self.optimizer.zero_grad()
         batch = self.model(batch)

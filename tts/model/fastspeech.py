@@ -31,5 +31,6 @@ class FastSpeech(nn.Module):
 
         # mel_spectrogram = self.decoder(phoneme)
         batch = self.decoder(batch)
-        batch.melspec_pred = self.linear(batch.melspec_pred).transpose(-1, -2).squeeze(-1)
+        melspec_pred = self.linear(batch.melspec_pred).transpose(-1, -2).squeeze(-1)
+        batch.melspec_pred = melspec_pred
         return batch
