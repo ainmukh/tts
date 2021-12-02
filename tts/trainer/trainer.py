@@ -117,7 +117,7 @@ class Trainer(BaseTrainer):
                 "learning rate", self.lr_scheduler.get_last_lr()[0]
             )
             self._log_predictions(batch.melspec_pred, batch.transcript)
-            self._log_attention(batch.attn)
+            # self._log_attention(batch.attn)
             self._log_scalars(self.train_metrics)
 
     def _train_epoch(self, epoch):
@@ -197,7 +197,7 @@ class Trainer(BaseTrainer):
 
             self.writer.set_step(epoch * self.len_epoch, "valid")
             self._log_predictions(batch.melspec_pred, batch.transcript)
-            self._log_attention(batch.attn)
+            # self._log_attention(batch.attn)
             self._log_scalars(self.valid_metrics)
             self._log_audio(batch.audio, batch.transcript)
         return self.valid_metrics.result()
