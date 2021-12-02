@@ -6,6 +6,7 @@ from torch.nn.utils import clip_grad_norm_
 from torch.nn.utils.rnn import pad_sequence
 from torchvision.transforms import ToTensor
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 
 from ..base import BaseTrainer
 from ..logger import plot_spectrogram_to_buf
@@ -88,6 +89,7 @@ class Trainer(BaseTrainer):
         batch = batch.to(self.device)
 
         melspec = self.melspec(batch.waveform)
+        plt.imshow(melspec[0].cpu())
         durations = self.aligner(
             batch.waveform, batch.waveform_length, batch.transcript
         ).to(self.device)
@@ -96,6 +98,7 @@ class Trainer(BaseTrainer):
 
         self.optimizer.zero_grad()
         batch = self.model(batch)
+        plt.imshow(batch.melspec[0].cpu())
 
         melspec_loss, length_loss = self.criterion(batch)  # TODO
         loss = melspec_loss + length_loss
