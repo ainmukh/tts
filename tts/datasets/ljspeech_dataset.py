@@ -1,11 +1,13 @@
 import torch
 import torchaudio
+from ..base import LJSpeechBase
+from ..utils import ConfigParser
 
 
-class LJSpeechDataset(torchaudio.datasets.LJSPEECH):
+class LJSpeechDataset(LJSpeechBase):
 
-    def __init__(self, root):
-        super().__init__(root=root)
+    def __init__(self, data_dir=None, split=None, *args, **kwargs):
+        super().__init__(data_dir=data_dir, split=split, *args, **kwargs)
         self._tokenizer = torchaudio.pipelines.TACOTRON2_GRIFFINLIM_CHAR_LJSPEECH.get_text_processor()
 
     def __getitem__(self, index: int):
@@ -25,3 +27,13 @@ class LJSpeechDataset(torchaudio.datasets.LJSPEECH):
             ])
             result.append(text)
         return result
+
+
+if __name__ == "__main__":
+    config_parser = ConfigParser.get_default_configs()
+
+    ds = LJSpeechDataset(
+        config_parser=config_parser
+    )
+    item = ds[0]
+    print(item)

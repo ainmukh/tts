@@ -11,6 +11,7 @@ class Batch:
     waveform: torch.Tensor
     waveform_length: torch.Tensor
     melspec: torch.Tensor
+    melspec_length: torch.Tensor
     durations: torch.Tensor
     transcript: List[str]
     tokens: torch.Tensor
@@ -34,18 +35,26 @@ class LJSpeechCollator:
     def __init__(self):
         self.melspec = MelSpectrogram(MelSpectrogramConfig())
         self.aligner = GraphemeAligner()
+        self.melspec_silence = -11.5129251
 
     def __call__(self, instances: List[Tuple]) -> Batch:
         waveform, waveforn_length, transcript, tokens, token_lengths = list(
             zip(*instances)
         )
 
+        melspec = [
+            self.melspec(waveform_[0]) for waveform_ in waveform
+        ]
+        melspec_length = torch.Tensor([melspec_.size(-1) for melspec_ in melspec])
+        melspec = pad_sequence([
+            melspec_.transpose(1, 0) for melspec_ in melspec
+        ], padding_value=self.melspec_silence)\
+            .transpose(1, 0).transpose(2, 1)
+
         waveform = pad_sequence([
             waveform_[0] for waveform_ in waveform
-        ]).transpose(0, 1)
+        ], padding_value=self.melspec_silence).transpose(0, 1)
         waveform_length = torch.cat(waveforn_length)
-
-        melspec = self.melspec(waveform)
 
         durations = self.aligner(
             waveform, waveform_length, transcript
@@ -57,6 +66,7 @@ class LJSpeechCollator:
         token_lengths = torch.cat(token_lengths)
 
         return Batch(
-            waveform, waveform_length, melspec, durations,
+            waveform, waveform_length,
+            melspec, melspec_length, durations,
             transcript, tokens, token_lengths
         )

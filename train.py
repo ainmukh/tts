@@ -9,11 +9,10 @@ from torch.utils.data import DataLoader
 import tts.loss as module_loss
 import tts.model as module_arch
 from tts.model import Vocoder
-from tts.datasets import LJSpeechDataset
+from tts.datasets import LJSpeechDataset, get_dataloaders
 from tts.collator import LJSpeechCollator
 from tts.trainer import Trainer
 from tts.utils import prepare_device, ConfigParser
-
 
 warnings.filterwarnings("ignore", category=UserWarning)
 
@@ -31,7 +30,7 @@ def main(config):
 
     # setup data_loader instances
     batch_size = config['data']['train']['batch_size']
-    dataloader = DataLoader(LJSpeechDataset('.'), batch_size=batch_size, collate_fn=LJSpeechCollator())  # TODO
+    dataloaders = get_dataloaders(config)
 
     # build model architecture, then print to console
     model = config.init_obj(config["arch"], module_arch)
@@ -61,8 +60,8 @@ def main(config):
         optimizer,
         config,
         device,
-        dataloader,
-        valid_data_loader=dataloader,
+        dataloaders['train'],
+        valid_data_loader=dataloaders['train'],
         lr_scheduler=lr_scheduler,
         len_epoch=config["trainer"].get("len_epoch", None),
         sr=config["preprocessing"]["sr"]
