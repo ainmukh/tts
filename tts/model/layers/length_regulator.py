@@ -9,25 +9,32 @@ class LengthRegulator(nn.Module):
         self.duration_predictor = DurationPredictor(groups)
         self.silence_token = torch.Tensor([-11.5129251] * emb_size)
 
-    def forward(self, phoneme, batch, durations=None):
+    def forward(self, batch, durations=None):
         # add silence to the end of the phoneme
         # phoneme = batch.phoneme
+        phoneme = batch.phoneme
         silence = self.silence_token.broadcast_to(phoneme.size(0), 1, -1).to(device=phoneme.device)
         phoneme = torch.cat((phoneme, silence), 1)
 
         durations_pred = self.duration_predictor(phoneme).exp()
         if not self.training:
             durations = durations_pred
+        else:
+            durations = batch.durations
 
         if self.training:
             # durations = self.aligner(batch.waveform, batch.waveform_length, batch.transcript)
             # scale by waveform domain
             durations = (durations * batch.melspec_length.reshape(-1, 1)).int()
             silence_duration = (batch.melspec_length - durations.sum(-1)).reshape(-1, 1)
-            durations = torch.cat((durations, silence_duration), 1)
+            durations = torch.cat((durations, silence_duration), 1).int()
 
         phoneme = regulate(phoneme, durations)
-        return phoneme, durations_pred
+
+        batch.phoneme = phoneme
+        batch.durations = durations
+        batch.durations_pred = durations_pred
+        return batch
 
 
 @torch.no_grad()

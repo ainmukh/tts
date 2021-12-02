@@ -55,7 +55,6 @@ class BaseDataset(Dataset):
         data_dict = self._index[ind]
         audio_path = data_dict["path"]
         audio_wave, sample_rate = torchaudio.load(audio_path)
-        audio_wave, audio_spec = self.process_wave(audio_wave)
         text = data_dict['text']
         return audio_wave, sample_rate, text, text
 

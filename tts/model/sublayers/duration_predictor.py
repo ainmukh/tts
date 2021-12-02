@@ -6,10 +6,15 @@ import torch.nn.functional as F
 class DurationPredictor(nn.Module):
     def __init__(self, groups, hidden_size: int = 384, kernel_size: int = 3, p: float = 0.1):
         super().__init__()
-        self.conv1 = nn.Conv1d(hidden_size, hidden_size, kernel_size=kernel_size, groups=groups)
+        padding = (kernel_size - 1) // 2
+        self.conv1 = nn.Conv1d(
+            hidden_size, hidden_size, kernel_size=kernel_size, padding=padding, groups=groups
+        )
         self.ln1 = nn.LayerNorm(hidden_size)
 
-        self.conv2 = nn.Conv1d(hidden_size, hidden_size, kernel_size=kernel_size, groups=groups)
+        self.conv2 = nn.Conv1d(
+            hidden_size, hidden_size, kernel_size=kernel_size, padding=padding, groups=groups
+        )
         self.ln2 = nn.LayerNorm(hidden_size)
 
         self.dropout = nn.Dropout(p)
