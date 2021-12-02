@@ -61,7 +61,7 @@ class Trainer(BaseTrainer):
             "melspec_loss", 'length_loss', "grad norm", writer=self.writer
         )
         self.valid_metrics = MetricTracker(
-            "melspec_loss", 'length_loss', 'val_loss', writer=self.writer
+            "melspec_loss", 'length_loss', 'loss', writer=self.writer
         )
         self.sr = sr
 

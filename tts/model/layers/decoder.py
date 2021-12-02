@@ -1,5 +1,5 @@
 import torch.nn as nn
-from ..sublayers import FFTBlock
+from ..sublayers import FFTBlock, PositionalEncoder
 
 
 class Decoder(nn.Module):
@@ -14,6 +14,7 @@ class Decoder(nn.Module):
         #         hidden_size, hidden_size, attn_heads, cnn_out_channels, kernel_size, p, groups
         #     ) for _ in range(n_layers)
         # ])
+        self.pos_encoder = PositionalEncoder()
         self.layers = nn.Sequential(*[
             FFTBlock(
                 hidden_size, hidden_size, attn_heads, cnn_out_channels, kernel_size, p, groups
@@ -22,7 +23,7 @@ class Decoder(nn.Module):
 
     def forward(self, batch):
         x = batch.phoneme
-
+        x = self.pos_encoder(x)
         x = self.layers(x)
         # for i, layer in enumerate(self.layers):
         #     x, attn = layer(x)
