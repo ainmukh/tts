@@ -224,7 +224,7 @@ class Trainer(BaseTrainer):
         idx = random.randint(0, spectrogram_batch.size(0))
         spectrogram = spectrogram_batch[idx]
         text = transcript_batch[idx]
-        image = PIL.Image.open(plot_spectrogram_to_buf(spectrogram.detach().cpu().log()))
+        image = PIL.Image.open(plot_spectrogram_to_buf(spectrogram.detach().cpu()))
         self.writer.add_image(
             "spectrogram", ToTensor()(image), caption=text
         )
