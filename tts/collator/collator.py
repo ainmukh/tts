@@ -11,10 +11,10 @@ class Batch:
     waveform: torch.Tensor
     waveform_length: torch.Tensor
     melspec_length: torch.Tensor
-    durations: torch.Tensor
     transcript: List[str]
     tokens: torch.Tensor
     token_lengths: torch.Tensor
+    durations: Optional[torch.Tensor] = None
     melspec: Optional[torch.Tensor] = None
     melspec_pred: Optional[torch.Tensor] = None
     durations_pred: Optional[torch.Tensor] = None
@@ -34,7 +34,7 @@ class Batch:
 class LJSpeechCollator:
     def __init__(self):
         self.melspec_config = MelSpectrogramConfig()
-        self.aligner = GraphemeAligner()
+        # self.aligner = GraphemeAligner()
         self.melspec_silence = -11.5129251
 
     def __call__(self, instances: List[Tuple]) -> Batch:
@@ -58,9 +58,9 @@ class LJSpeechCollator:
 
         melspec_length = (waveform_length - self.melspec_config.win_length) // self.melspec_config.hop_length + 5
 
-        durations = self.aligner(
-            waveform, waveform_length, transcript
-        )
+        # durations = self.aligner(
+        #     waveform, waveform_length, transcript
+        # )
 
         tokens = pad_sequence([
             tokens_[0] for tokens_ in tokens
@@ -69,7 +69,6 @@ class LJSpeechCollator:
 
         return Batch(
             waveform, waveform_length, melspec_length,
-            # melspec, melspec_length,
-            durations,
+            # melspec, melspec_length, durations,
             transcript, tokens, token_lengths
         )

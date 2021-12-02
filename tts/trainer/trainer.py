@@ -11,6 +11,7 @@ from ..base import BaseTrainer
 from ..logger import plot_spectrogram_to_buf
 from ..utils import inf_loop, MetricTracker
 from ..collator import MelSpectrogram, MelSpectrogramConfig
+from ..aligner import GraphemeAligner
 
 
 class Trainer(BaseTrainer):
@@ -40,6 +41,8 @@ class Trainer(BaseTrainer):
 
         self.melspec = MelSpectrogram(MelSpectrogramConfig()).to(device)
         self.melspec_silence = -11.5129251
+
+        self.aligner = GraphemeAligner().to(device)
 
         if len_epoch is None:
             # epoch-based training
@@ -83,8 +86,13 @@ class Trainer(BaseTrainer):
     def _train_iteration(self, batch, epoch: int, batch_num: int):
         # batch = self.move_batch_to_device(batch, self.device)
         batch = batch.to(self.device)
+
         melspec = self.melspec(batch.waveform)
+        durations = self.aligner(
+            batch.waveform, batch.waveform_length, batch.transcript
+        )
         batch.melspec = melspec
+        batch.durations = durations
 
         self.optimizer.zero_grad()
         batch = self.model(batch)
