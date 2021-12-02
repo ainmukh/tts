@@ -51,7 +51,7 @@ class Trainer(BaseTrainer):
         self.valid_data_loader = valid_data_loader
         self.do_validation = self.valid_data_loader is not None
         self.lr_scheduler = lr_scheduler
-        self.log_step = 1
+        self.log_step = 10
 
         self.train_metrics = MetricTracker(
             "melspec_loss", 'length_loss', "grad norm", writer=self.writer
