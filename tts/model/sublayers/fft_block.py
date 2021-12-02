@@ -23,4 +23,4 @@ class FFTBlock(nn.Module):
         conv_out = self.conv(res.transpose(-1, -2)).transpose(-1, -2)
         res = self.ln2(conv_out + res)
         res = self.dropout(res)
-        return res, att
+        return res
