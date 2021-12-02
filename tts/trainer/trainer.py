@@ -48,10 +48,10 @@ class Trainer(BaseTrainer):
         self.log_step = 1
 
         self.train_metrics = MetricTracker(
-            "loss", "grad norm", writer=self.writer
+            "melspec_loss", 'length_loss', "grad norm", writer=self.writer
         )
         self.valid_metrics = MetricTracker(
-            "loss", writer=self.writer
+            "melspec_loss", 'length_loss', writer=self.writer
         )
         self.sr = sr
 
@@ -154,7 +154,11 @@ class Trainer(BaseTrainer):
                 batch = batch.to(self.device)
                 batch = self.model(batch)
 
-                batch.audio = self.vocoder.inference(batch.melspec_preds)
+                audio = []
+                for i in tqdm(range(batch.size(0))):
+                    wav = self.vocoder.inference(batch.melspec_pred[i])
+                    audio.append(wav)
+                batch.audio = torch.cat(audio, 0)
 
                 melspec_loss, length_loss = self.criterion(batch)
 
@@ -190,15 +194,15 @@ class Trainer(BaseTrainer):
         idx = random.randint(0, spectrogram_batch.size(0))
         spectrogram = spectrogram_batch[idx]
         text = transcript_batch[idx]
-        image = PIL.Image.open(plot_spectrogram_to_buf(spectrogram.cpu().log()))
+        image = PIL.Image.open(plot_spectrogram_to_buf(spectrogram.detach().cpu().log()))
         self.writer.add_image(
             "spectrogram", ToTensor()(image), caption=text
         )
 
     def _log_attention(self, attn_batch):
         attention = random.choice(attn_batch)
-        image = PIL.Image.open(plot_spectrogram_to_buf(attention.cpu().log()))
-        self.writer.add_image("attention", ToTensor()(image))
+        image = PIL.Image.open(plot_spectrogram_to_buf(attention.detach().cpu().log()))
+        self.writer.add_image("attention", ToTensor()(image), caption='')
 
     @torch.no_grad()
     def get_grad_norm(self, norm_type=2):
