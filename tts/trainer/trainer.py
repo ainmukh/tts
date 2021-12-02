@@ -94,13 +94,13 @@ class Trainer(BaseTrainer):
         ).to(self.device)
         batch.melspec = melspec
         batch.durations = durations
-        print(batch.melspec[0])
 
         self.optimizer.zero_grad()
         batch = self.model(batch)
 
         melspec_loss, length_loss = self.criterion(batch)  # TODO
         loss = melspec_loss + length_loss
+
         loss.backward()
         self._clip_grad_norm()
         self.optimizer.step()

@@ -13,7 +13,7 @@ class LengthRegulator(nn.Module):
         # add silence to the end of the phoneme
         # phoneme = batch.phoneme
         phoneme = batch.phoneme
-        durations_pred = self.duration_predictor(phoneme).exp().squeeze(-1)
+        durations_pred = self.duration_predictor(phoneme).squeeze(-1)
         batch.durations_pred = durations_pred
 
         silence = self.silence_token.broadcast_to(phoneme.size(0), 1, -1).to(device=phoneme.device)
