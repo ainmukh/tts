@@ -10,12 +10,12 @@ from ..aligner import GraphemeAligner
 class Batch:
     waveform: torch.Tensor
     waveform_length: torch.Tensor
+    melspec_length: torch.Tensor
     durations: torch.Tensor
     transcript: List[str]
     tokens: torch.Tensor
     token_lengths: torch.Tensor
     melspec: Optional[torch.Tensor] = None
-    melspec_length: Optional[torch.Tensor] = None
     melspec_pred: Optional[torch.Tensor] = None
     durations_pred: Optional[torch.Tensor] = None
     phoneme: Optional[torch.Tensor] = None
@@ -33,7 +33,7 @@ class Batch:
 
 class LJSpeechCollator:
     def __init__(self):
-        # self.melspec = MelSpectrogram(MelSpectrogramConfig())
+        self.melspec_config = MelSpectrogramConfig()
         self.aligner = GraphemeAligner()
         self.melspec_silence = -11.5129251
 
@@ -56,6 +56,8 @@ class LJSpeechCollator:
         ]).transpose(0, 1)
         waveform_length = torch.cat(waveforn_length)
 
+        melspec_length = (waveform_length - self.melspec_config.win_length) // self.melspec_config.hop_length + 5
+
         durations = self.aligner(
             waveform, waveform_length, transcript
         )
@@ -66,7 +68,7 @@ class LJSpeechCollator:
         token_lengths = torch.cat(token_lengths)
 
         return Batch(
-            waveform, waveform_length,
+            waveform, waveform_length, melspec_length,
             # melspec, melspec_length,
             durations,
             transcript, tokens, token_lengths

@@ -83,16 +83,8 @@ class Trainer(BaseTrainer):
     def _train_iteration(self, batch, epoch: int, batch_num: int):
         # batch = self.move_batch_to_device(batch, self.device)
         batch = batch.to(self.device)
-        melspec = [
-            self.melspec(waveform_[0]) for waveform_ in batch.waveform
-        ]
-        melspec_length = torch.Tensor([melspec_.size(-1) for melspec_ in melspec])
-        melspec = pad_sequence([
-                melspec_.transpose(1, 0) for melspec_ in melspec
-        ], padding_value=self.melspec_silence)\
-            .transpose(1, 0).transpose(2, 1)
+        melspec = self.melspec(batch.waveform)
         batch.melspec = melspec
-        batch.melspec_length = melspec_length
 
         self.optimizer.zero_grad()
         batch = self.model(batch)
