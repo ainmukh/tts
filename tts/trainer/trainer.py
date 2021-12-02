@@ -193,7 +193,7 @@ class Trainer(BaseTrainer):
 
                 self.valid_metrics.update('melspec_loss', melspec_loss.item(), n=batch.melspec_pred.size(0))
                 self.valid_metrics.update('length_loss', length_loss.item(), n=batch.melspec_pred.size(0))
-                self.valid_metrics.update('val_loss', loss.item(), n=batch.melspec_pred.size(0))
+                self.valid_metrics.update('loss', loss.item(), n=batch.melspec_pred.size(0))
 
             self.writer.set_step(epoch * self.len_epoch, "valid")
             self._log_predictions(batch.melspec_pred, batch.transcript)
