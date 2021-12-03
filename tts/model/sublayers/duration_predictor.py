@@ -22,10 +22,10 @@ class DurationPredictor(nn.Module):
 
     def forward(self, x):
         x = F.relu(self.conv1(x.transpose(-1, -2))).transpose(-1, -2)
-        x = self.ln1(x)
+        x = self.dropout(self.ln1(x))
 
         x = F.relu(self.conv2(x.transpose(-1, -2))).transpose(-1, -2)
-        x = self.ln2(x)
+        x = self.dropout(self.ln2(x))
 
-        x = self.linear(x)
+        x = F.relu(self.linear(x))
         return x
