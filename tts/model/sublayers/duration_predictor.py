@@ -27,5 +27,5 @@ class DurationPredictor(nn.Module):
         x = F.leaky_relu(self.conv2(x.transpose(-1, -2))).transpose(-1, -2)
         x = self.dropout(self.ln2(x))
 
-        x = F.relu(self.linear(x))
+        x = self.linear(x)
         return x
