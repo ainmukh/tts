@@ -15,12 +15,15 @@ class FFTBlock(nn.Module):
         self.ln2 = nn.LayerNorm(in_size)
         self.dropout = nn.Dropout(p)
 
-    def forward(self, hiddens):
-        att = self.attention(hiddens)
+    def forward(self, batch):
+        hiddens = batch.hiddens
+        mask = batch.mask
+        att = self.attention(hiddens, mask)
         res = self.ln1(att + hiddens)
         res = self.dropout(res)
 
         conv_out = self.conv(res.transpose(-1, -2)).transpose(-1, -2)
         res = self.ln2(conv_out + res)
         res = self.dropout(res)
-        return res
+        batch.hiddens = res
+        return batch
