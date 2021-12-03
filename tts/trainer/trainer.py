@@ -179,7 +179,6 @@ class Trainer(BaseTrainer):
                 ).to(self.device)
                 batch.melspec = melspec
                 batch.durations = durations
-                batch.mask = (batch.tokens == 0).to(self.device)
 
                 batch = self.model(batch)
 
