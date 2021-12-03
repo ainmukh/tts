@@ -22,13 +22,13 @@ class Decoder(nn.Module):
         ])
 
     def forward(self, batch):
-        # x = batch.hiddens
+        x = batch.phoneme
         # x = self.pos_encoder(x)
-        batch = self.layers(batch)
+        x = self.layers(x)
         # for i, layer in enumerate(self.layers):
         #     x, attn = layer(x)
         #     if i == 0:
         #         batch.__setattr__(f'attn', attn)
 
-        batch.melspec_pred = batch.hiddens
+        batch.melspec_pred = x
         return batch

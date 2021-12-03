@@ -18,11 +18,12 @@ class Encoder(nn.Module):
         ])
 
     def forward(self, batch):
-        batch.hiddens = self.embedding(batch.tokens)
+        x = self.embedding(batch.tokens)
         # x = self.pos_encoder(x)
-        batch = self.layers(batch)
+        x = self.layers(x)
         # for i, layer in enumerate(self.layers):
         #     x, attn = layer(x)
         #     # batch.__setattr__(f'encoder_attn{i}', attn)
 
+        batch.phoneme = x
         return batch

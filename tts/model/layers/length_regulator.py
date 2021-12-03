@@ -12,7 +12,7 @@ class LengthRegulator(nn.Module):
     def forward(self, batch):
         # add silence to the end of the phoneme
         # phoneme = batch.phoneme
-        phoneme = batch.hiddens
+        phoneme = batch.phoneme
         durations_pred = self.duration_predictor(phoneme).squeeze(-1)
         batch.durations_pred = durations_pred
 
@@ -33,7 +33,7 @@ class LengthRegulator(nn.Module):
 
         phoneme = regulate(phoneme, durations)
 
-        batch.hiddens = phoneme
+        batch.phoneme = phoneme
         return batch
 
 
