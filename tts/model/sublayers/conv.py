@@ -14,5 +14,5 @@ class Conv(nn.Module):
 
     def forward(self, x):
         x = self.conv1(x)
-        x = self.conv2(F.relu(x))
+        x = self.conv2(F.leaky_relu(x))
         return x

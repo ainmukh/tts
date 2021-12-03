@@ -21,10 +21,10 @@ class DurationPredictor(nn.Module):
         self.linear = nn.Linear(hidden_size, 1)
 
     def forward(self, x):
-        x = F.relu(self.conv1(x.transpose(-1, -2))).transpose(-1, -2)
+        x = F.leaky_relu(self.conv1(x.transpose(-1, -2))).transpose(-1, -2)
         x = self.dropout(self.ln1(x))
 
-        x = F.relu(self.conv2(x.transpose(-1, -2))).transpose(-1, -2)
+        x = F.leaky_relu(self.conv2(x.transpose(-1, -2))).transpose(-1, -2)
         x = self.dropout(self.ln2(x))
 
         x = F.relu(self.linear(x))
