@@ -1,5 +1,5 @@
 import torch.nn as nn
-from ..sublayers import FFTBlock, PositionalEncoder
+from ..sublayers import FFTBlock
 
 
 class Encoder(nn.Module):
