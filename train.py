@@ -53,16 +53,6 @@ def main(config):
     optimizer = config.init_obj(config["optimizer"], torch.optim, trainable_params)
     lr_scheduler = config.init_obj(config["lr_scheduler"], torch.optim.lr_scheduler, optimizer)
 
-    # def get_warmup_scheduler(optimizer, d_model=384, warmup_steps=50):
-    #     def lr_lambda(step):
-    #         if step == 0:
-    #             return 0
-    #         return d_model ** (-0.5) * min(step ** (-0.5), step * warmup_steps ** (-1.5))
-    #
-    #     return torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda)
-    #
-    # lr_scheduler = get_warmup_scheduler(optimizer)
-
     trainer = Trainer(
         model,
         vocoder,
