@@ -102,7 +102,7 @@ class Trainer(BaseTrainer):
         loss = melspec_loss + length_loss
 
         loss.backward()
-        self._clip_grad_norm()
+        # self._clip_grad_norm()
         self.optimizer.step()
         if self.lr_scheduler is not None:
             self.lr_scheduler.step()

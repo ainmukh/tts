@@ -9,7 +9,7 @@ class MSELossWrapper(MSELoss):
         melspec, melspec_pred = batch.melspec, batch.melspec_pred
         melspec_loss = L1Loss()(melspec_pred, melspec)
 
-        durations, durations_pred = batch.durations, batch.durations_pred
-        length_loss = super().forward(durations_pred, torch.log1p_(durations))
+        durations, durations_pred = torch.log1p_(batch.durations), batch.durations_pred
+        length_loss = super().forward(durations_pred, durations)
 
         return melspec_loss, length_loss
