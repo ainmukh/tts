@@ -23,8 +23,9 @@ class MSELossWrapper(MSELoss):
         try:
             length_loss = super().forward(durations_pred, durations)
         except Exception:
-            for t in batch.transcript:
-                print(t, '\n')
+            for i, t in enumerate(batch.transcript):
+                if durations_pred[i].size() != durations[i].size():
+                    print(t, '\n')
             exit()
 
         return melspec_loss, length_loss
