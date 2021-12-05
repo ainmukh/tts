@@ -26,9 +26,12 @@ class Decoder(nn.Module):
         # x = batch.phoneme
         # x = self.layers(x)
 
-        melspec_mask = torch.zeros(batch.melspec.size(0), batch.melspec.size(1), batch.melspec_length.max())
+        melspec_mask = torch.zeros(
+            batch.melspec.size(0), batch.melspec.size(1), batch.melspec_length.max(),
+            dtype=torch.bool
+        )
         for i in range(melspec_mask.size(0)):
-            melspec_mask[i, :, batch.melspec_length[i]:] = 1
+            melspec_mask[i, :, batch.melspec_length[i]:] = True
 
         batch.attn_mask = melspec_mask \
             .repeat(1, self.heads, 1) \
