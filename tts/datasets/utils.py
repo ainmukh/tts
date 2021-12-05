@@ -35,6 +35,6 @@ def get_dataloaders(configs: ConfigParser):
             raise Exception()
 
         # create dataloader
-        dataloader = DataLoader(dataset, batch_size=batch_size, collate_fn=LJSpeechCollator())
+        dataloader = DataLoader(dataset, batch_size=batch_size, collate_fn=LJSpeechCollator(), shuffle=True)
         dataloaders[split] = dataloader
     return dataloaders
