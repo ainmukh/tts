@@ -94,6 +94,9 @@ class Trainer(BaseTrainer):
         ).to(self.device)
         batch.melspec = melspec
         batch.durations = durations
+        if batch.durations.size(-1) != batch.tokens.size(-1):
+            torch.save(batch.tokens, f'bad_tensor{epoch * 250 + batch_num}.pth')
+            return
 
         self.optimizer.zero_grad()
         batch = self.model(batch)
