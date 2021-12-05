@@ -6,14 +6,14 @@ from typing import Tuple
 
 class MSELossWrapper(MSELoss):
     def forward(self, batch, *args, **kwargs) -> Tuple[Tensor, Tensor]:
-        melspec_mask = torch.ones(batch.melspec.size(0), batch.melspec.size(1), batch.melspec_length.max())
-        for i in range(melspec_mask.size(0)):
-            melspec_mask[i, :, batch.melspec_length[i]:] = 0
-        melspec_mask = melspec_mask.to(batch.melspec.device)
-
-        melspec = batch.melspec * melspec_mask
-        melspec_pred = batch.melspec_pred * melspec_mask
-        # melspec, melspec_pred = batch.melspec, batch.melspec_pred
+        # melspec_mask = torch.ones(batch.melspec.size(0), batch.melspec.size(1), batch.melspec_length.max())
+        # for i in range(melspec_mask.size(0)):
+        #     melspec_mask[i, :, batch.melspec_length[i]:] = 0
+        # melspec_mask = melspec_mask.to(batch.melspec.device)
+        #
+        # melspec = batch.melspec * melspec_mask
+        # melspec_pred = batch.melspec_pred * melspec_mask
+        melspec, melspec_pred = batch.melspec, batch.melspec_pred
         melspec_loss = L1Loss()(melspec_pred, melspec)
 
         # durations_mask = (batch.tokens == 0).to(batch.tokens.device)
