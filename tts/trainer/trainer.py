@@ -1,4 +1,5 @@
 import random
+import json
 
 import PIL
 import torch
@@ -94,9 +95,6 @@ class Trainer(BaseTrainer):
         ).to(self.device)
         batch.melspec = melspec
         batch.durations = durations
-        if batch.durations.size(-1) != batch.tokens.size(-1):
-            torch.save(batch.tokens, f'bad_tensor{epoch * 250 + batch_num}.pth')
-            return
 
         self.optimizer.zero_grad()
         batch = self.model(batch)
@@ -260,3 +258,20 @@ class Trainer(BaseTrainer):
             return
         for metric_name in metric_tracker.keys():
             self.writer.add_scalar(f"{metric_name}", metric_tracker.avg(metric_name))
+
+    def test(self):
+        for epoch in range(self.start_epoch, self.epochs + 1):
+            for batch_idx, batch in enumerate(
+                    tqdm(self.data_loader, desc="train", total=self.len_epoch)
+                    # tqdm(self.data_loader, desc="train", total=len(self.data_loader))
+            ):
+                batch = batch.to(self.device)
+
+                durations = self.aligner(
+                    batch.waveform, batch.waveform_length, batch.transcript
+                ).to(self.device)
+                batch.durations = durations
+                if batch.tokens.size(-1) != batch.durations.size(-1):
+                    print('found a problem')
+                    with open(f'saved_{batch_idx}.json', 'w') as fout:
+                        fout.write(json.dumps([s for s in batch.transcript]))
