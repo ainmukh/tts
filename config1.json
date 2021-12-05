@@ -27,8 +27,8 @@
           "type": "LJSpeechDataset",
           "args": {
             "max_audio_length": 20,
-            "max_text_length": 100,
-            "limit": 16
+            "max_text_length": 200,
+            "limit": -1
           }
         }
       ]
@@ -41,8 +41,8 @@
           "type": "LJSpeechDataset",
           "args": {
             "max_audio_length": 20,
-            "max_text_length": 100,
-            "limit": 16
+            "max_text_length": 200,
+            "limit": -1
           }
         }
       ]
@@ -51,7 +51,7 @@
   "optimizer": {
     "type": "Adam",
     "args": {
-      "lr": 5e-5,
+      "lr": 7e-5,
       "betas": [0.9, 0.98]
     }
   },
@@ -60,14 +60,17 @@
     "args": {}
   },
   "lr_scheduler": {
-    "type": "StepLR",
+    "type": "OneCycleLR",
     "args": {
-      "step_size": 75000,
-      "gamma": 1
+      "steps_per_epoch": 150,
+      "epochs": 40,
+      "anneal_strategy": "cos",
+      "max_lr": 7e-5,
+      "pct_start": 0.2
     }
   },
   "trainer": {
-    "epochs": 100,
+    "epochs": 40,
     "save_dir": "saved/",
     "save_period": 5,
     "verbosity": 2,
@@ -75,7 +78,7 @@
     "early_stop": 100,
     "writer": "wandb",
     "project_name": "tts",
-    "len_epoch": 50,
+    "len_epoch": 150,
     "grad_norm_clip": 10
   }
 }
