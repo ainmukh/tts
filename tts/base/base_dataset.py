@@ -62,6 +62,7 @@ class BaseDataset(Dataset):
         for abbreviation in s.split():
             key, value = abbreviation.split('.')
             expansion[key] = value
+        expansion['\"'] = '\''
         return expansion
 
     def __getitem__(self, ind):

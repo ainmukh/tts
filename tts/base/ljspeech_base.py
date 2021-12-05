@@ -68,6 +68,8 @@ class LJSpeechBase(BaseDataset):
                 continue
             if not df[df[0] == wav_id][2].values[0].isascii():
                 continue
+            if '[' in df[df[0] == wav_id][2].values[0]:
+                continue
             wav_text = df[df[0] == wav_id][2].values[0]
             wav_path = wav_dir / f"{wav_id}.wav"
             t_info = torchaudio.info(str(wav_path))
