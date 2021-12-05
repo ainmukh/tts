@@ -8,19 +8,22 @@ class FFTBlock(nn.Module):
                  out_channels: int = 1536, kernel_size: int = 3,
                  p: float = 0.1, groups: int = 1):
         super(FFTBlock, self).__init__()
-
+        self.heads = heads
         self.attention = MultiHeadAttention(in_size, hidden_size, heads)
         self.ln1 = nn.LayerNorm(in_size)
         self.conv = Conv(in_size, out_channels, kernel_size, groups)
         self.ln2 = nn.LayerNorm(in_size)
         self.dropout = nn.Dropout(p)
 
-    def forward(self, hiddens):
-        att = self.attention(hiddens)
+    def forward(self, batch):
+        hiddens = batch.hiddens
+        attn_mask = (batch.tokens == 0).repeat(1, self.heads).reshape(hiddens.size(0) * self.heads, -1)
+        att = self.attention(hiddens, attn_mask)
         res = self.ln1(att + hiddens)
         res = self.dropout(res)
 
         conv_out = self.conv(res.transpose(-1, -2)).transpose(-1, -2)
         res = self.ln2(conv_out + res)
         res = self.dropout(res)
-        return res
+        batch.hiddens = res
+        return batch
