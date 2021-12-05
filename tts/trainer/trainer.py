@@ -165,11 +165,11 @@ class Trainer(BaseTrainer):
         self.vocoder.eval()
         self.valid_metrics.reset()
         with torch.no_grad():
-            # for batch_idx, batch in tqdm(
-            #         enumerate(self.valid_data_loader), desc="validation",
-            #         total=len(self.valid_data_loader)
-            # ):
-            for batch_idx, batch in enumerate(self.valid_data_loader):
+            for batch_idx, batch in tqdm(
+                    enumerate(self.valid_data_loader), desc="validation",
+                    total=len(self.valid_data_loader)
+            ):
+                # for batch_idx, batch in enumerate(self.valid_data_loader):
                 # batch = self.move_batch_to_device(batch, self.device)
                 batch = batch.to(self.device)
 
@@ -183,7 +183,7 @@ class Trainer(BaseTrainer):
                 batch = self.model(batch)
 
                 audio = []
-                for i in tqdm(range(batch.melspec_pred.size(0))):
+                for i in range(batch.melspec_pred.size(0)):
                     wav = self.vocoder.inference(batch.melspec_pred[i].unsqueeze(0))
                     audio.append(wav)
                 batch.audio = torch.cat(audio, 0)
