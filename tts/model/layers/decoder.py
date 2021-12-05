@@ -27,16 +27,20 @@ class Decoder(nn.Module):
         # x = self.layers(x)
 
         melspec_mask = torch.zeros(
-            batch.melspec.size(0), batch.melspec.size(1), batch.melspec_length.max(),
+            batch.melspec.size(0), batch.melspec_length.max(),
             dtype=torch.bool
         )
         for i in range(melspec_mask.size(0)):
-            melspec_mask[i, :, batch.melspec_length[i]:] = True
+            melspec_mask[i, batch.melspec_length[i]:] = True
 
         batch.attn_mask = melspec_mask \
-            .repeat(1, self.heads, 1) \
-            .reshape(batch.hiddens.size(0) * self.heads, batch.hiddens.size(1), -1)\
+            .repeat(1, self.heads) \
+            .reshape(batch.hiddens.size(0) * self.heads, -1) \
             .to(batch.hiddens.device)
+        # batch.attn_mask = melspec_mask \
+        #     .repeat(1, self.heads, 1) \
+        #     .reshape(batch.hiddens.size(0) * self.heads, batch.hiddens.size(1), -1)\
+        #     .to(batch.hiddens.device)
 
         batch = self.layers(batch)
         # for i, layer in enumerate(self.layers):
