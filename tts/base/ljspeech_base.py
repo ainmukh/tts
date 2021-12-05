@@ -66,6 +66,8 @@ class LJSpeechBase(BaseDataset):
         for wav_id in tqdm(df[0]):
             if df[df[0] == wav_id][2].values[0] == pass_token:
                 continue
+            if not df[df[0] == wav_id][2].values[0].isascii():
+                continue
             wav_text = df[df[0] == wav_id][2].values[0]
             wav_path = wav_dir / f"{wav_id}.wav"
             t_info = torchaudio.info(str(wav_path))

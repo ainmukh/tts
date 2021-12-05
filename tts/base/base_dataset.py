@@ -50,12 +50,26 @@ class BaseDataset(Dataset):
         # It would be easier to write length-based batch samplers later
         index = self._sort_index(index)
         self._index = index
+        self.expansion = self._get_expansion()
+
+    def _get_expansion(self):
+        s = 'Mr.Mister Mrs.Misess Dr.Doctor No.Number St.Saint' \
+            ' Co.Company Jr.Junior Maj.Major Gen.General Drs.Doctors' \
+            ' Rev.Reverend Lt.Lieutenant Hon.Honorable Sgt.Sergeant Capt.Captain' \
+            ' Esq.Esquire Ltd.Limited Col.Colonel Ft.Fort'
+        # s = s.split()
+        expansion = dict()
+        for abbreviation in s.split():
+            key, value = abbreviation.split('.')
+            expansion[key] = value
+        return expansion
 
     def __getitem__(self, ind):
         data_dict = self._index[ind]
         audio_path = data_dict["path"]
         audio_wave, sample_rate = torchaudio.load(audio_path)
         text = data_dict['text']
+        text = self.process_text(text)
         return audio_wave, sample_rate, text, text
 
     @staticmethod
@@ -77,6 +91,11 @@ class BaseDataset(Dataset):
             if self.spec_augs is not None:
                 audio_tensor_spec = self.spec_augs(audio_tensor_spec)
             return audio_tensor_wave, audio_tensor_spec
+
+    def process_text(self, text):
+        for key, value in self.expansion.items():
+            text = text.replace(key, value)
+        return text
 
     @staticmethod
     def _filter_records_from_dataset(
