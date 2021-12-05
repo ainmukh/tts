@@ -23,7 +23,8 @@ class Encoder(nn.Module):
         batch.hiddens = self.embedding(batch.tokens)
         batch.attn_mask = (batch.tokens == 0)\
             .repeat(1, self.heads)\
-            .reshape(batch.tokens.size(0) * self.heads, -1).to(batch.token.device)
+            .reshape(batch.tokens.size(0) * self.heads, -1)\
+            .to(batch.tokens.device)
         batch = self.layers(batch)
         # for i, layer in enumerate(self.layers):
         #     x, attn = layer(x)
