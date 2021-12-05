@@ -31,8 +31,8 @@ class Decoder(nn.Module):
             melspec_mask[i, :, batch.melspec_length[i]:] = 1
 
         batch.attn_mask = melspec_mask \
-            .repeat(1, self.heads) \
-            .reshape(batch.hiddens.size(0) * self.heads, -1)\
+            .repeat(1, self.heads, 1) \
+            .reshape(batch.hiddens.size(0) * self.heads, batch.hiddens.size(1), -1)\
             .to(batch.hiddens.device)
 
         batch = self.layers(batch)
