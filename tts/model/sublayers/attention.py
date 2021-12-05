@@ -23,13 +23,16 @@ class MultiHeadAttention(nn.Module):
             .permute(0, 2, 1, 3)\
             .reshape(batch_size * self.heads, -1, self.hidden_size)
 
-    def forward(self, x):
+    def forward(self, x, mask=None):
         batch_size = x.size(0)
         q = self.project(x, self.q, batch_size)
         k = self.project(x, self.k, batch_size)
         v = self.project(x, self.v, batch_size)
 
         scaled_product = torch.bmm(q, k.transpose(2, 1)) / self.scaler
+        if mask is not None:
+            scaled_product.masked_fill_(mask.unsqueeze(1), -10 ** 9)
+
         scores = F.softmax(scaled_product, -1)
         attention = torch.bmm(scores, v)
 
