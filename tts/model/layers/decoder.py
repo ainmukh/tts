@@ -15,6 +15,7 @@ class Decoder(nn.Module):
         #         hidden_size, hidden_size, attn_heads, cnn_out_channels, kernel_size, p, groups
         #     ) for _ in range(n_layers)
         # ])
+        self.heads = attn_heads
         self.layers = nn.Sequential(*[
             FFTBlock(
                 hidden_size, hidden_size, attn_heads, cnn_out_channels, kernel_size, p, groups
