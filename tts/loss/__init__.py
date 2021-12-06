@@ -1,3 +1,3 @@
-from .loss import MSELossWrapper as MSELoss, BadDurationException
+from .loss import MSELossWrapper as MSELoss
 
-__all__ = ['MSELoss', 'BadDurationException']
+__all__ = ['MSELoss']

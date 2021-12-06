@@ -9,7 +9,6 @@ from torchvision.transforms import ToTensor
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 
-from ..loss import BadDurationException
 from ..base import BaseTrainer
 from ..logger import plot_spectrogram_to_buf
 from ..utils import inf_loop, MetricTracker
@@ -99,13 +98,12 @@ class Trainer(BaseTrainer):
 
         self.optimizer.zero_grad()
         batch = self.model(batch)
-
-        try:
-            melspec_loss, length_loss = self.criterion(batch)  # TODO
-        except BadDurationException as e:
-            with open(f'bad_batch.txt', 'w') as fout:
-                fout.write(json.dumps([s for s in e.batch.transcript]))
+        if batch.durations.size() != batch.durations_pred.size():
+            print(batch.durations.size(), batch.durations_pred.size(), batch.tokens.size())
+            print(batch.transcript)
             return
+
+        melspec_loss, length_loss = self.criterion(batch)  # TODO
 
         loss = melspec_loss + length_loss
 

@@ -53,14 +53,14 @@ class BaseDataset(Dataset):
         self.expansion = self._get_expansion()
 
     def _get_expansion(self):
-        s = 'Mr.Mister Mrs.Misess Dr.Doctor No.Number St.Saint' \
-            ' Co.Company Jr.Junior Maj.Major Gen.General Drs.Doctors' \
-            ' Rev.Reverend Lt.Lieutenant Hon.Honorable Sgt.Sergeant Capt.Captain' \
-            ' Esq.Esquire Ltd.Limited Col.Colonel Ft.Fort'
+        s = 'Mr.,Mister Mrs.,Misess Dr.,Doctor No.,Number St.,Saint' \
+            ' Co.,Company Jr.,Junior Maj.,Major Gen.,General Drs.,Doctors' \
+            ' Rev.,Reverend Lt.,Lieutenant Hon.,Honorable Sgt.,Sergeant Capt.,Captain' \
+            ' Esq.,Esquire Ltd.,Limited Col.,Colonel Ft.,Fort'
         # s = s.split()
         expansion = dict()
         for abbreviation in s.split():
-            key, value = abbreviation.split('.')
+            key, value = abbreviation.split(',')
             expansion[key] = value
         expansion['\"'] = '\''
         return expansion

@@ -5,10 +5,6 @@ from typing import Tuple
 from ..collator import Batch
 
 
-class BadDurationException(Exception):
-    batch: Batch
-
-
 class MSELossWrapper(MSELoss):
     def forward(self, batch, *args, **kwargs) -> Tuple[Tensor, Tensor]:
         # melspec_mask = torch.ones(batch.melspec.size(0), batch.melspec.size(1), batch.melspec_length.max())
@@ -25,9 +21,6 @@ class MSELossWrapper(MSELoss):
         # durations = torch.log1p_(batch.durations) * durations_mask
         # durations_pred = batch.durations_pred * durations_mask
         durations, durations_pred = torch.log1p_(batch.durations), batch.durations_pred
-        try:
-            length_loss = super().forward(durations_pred, durations)
-        except Exception as e:
-            raise BadDurationException(batch)
+        length_loss = super().forward(durations_pred, durations)
 
         return melspec_loss, length_loss
