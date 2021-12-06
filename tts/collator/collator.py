@@ -14,7 +14,6 @@ class Batch:
     transcript: List[str]
     tokens: torch.Tensor
     token_lengths: torch.Tensor
-    index: torch.Tensor
     durations: Optional[torch.Tensor] = None
     melspec: Optional[torch.Tensor] = None
     melspec_pred: Optional[torch.Tensor] = None
@@ -39,7 +38,7 @@ class LJSpeechCollator:
         self.melspec_silence = -11.5129251
 
     def __call__(self, instances: List[Tuple]) -> Batch:
-        waveform, waveforn_length, transcript, tokens, token_lengths, index = list(
+        waveform, waveforn_length, transcript, tokens, token_lengths = list(
             zip(*instances)
         )
 
@@ -71,6 +70,5 @@ class LJSpeechCollator:
         return Batch(
             waveform, waveform_length, melspec_length,
             # melspec, melspec_length, durations,
-            transcript, tokens, token_lengths,
-            index
+            transcript, tokens, token_lengths
         )
