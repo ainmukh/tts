@@ -34,6 +34,10 @@ def main(config):
 
     # build model architecture, then print to console
     model = config.init_obj(config["arch"], module_arch)
+    if config["warm_start"] != "":
+        print("Starting from checkpoint", config["warm_start"])
+        check_point = torch.load(config["warm_start"])
+        model.load_state_dict(check_point["state_dict"])
     logger.info(model)
 
     # prepare for (multi-device) GPU training

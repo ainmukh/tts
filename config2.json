@@ -1,5 +1,5 @@
 {
-  "name": "default_config",
+  "name": "config2",
   "n_gpu": 1,
   "preprocessing": {
     "sr": 22050
@@ -20,7 +20,7 @@
   },
   "data": {
     "train": {
-      "batch_size": 32,
+      "batch_size": 48,
       "num_workers": 5,
       "datasets": [
         {
@@ -42,7 +42,7 @@
           "args": {
             "max_audio_length": 20,
             "max_text_length": 200,
-            "limit": 32
+            "limit": 96
           }
         }
       ]
@@ -51,7 +51,7 @@
   "optimizer": {
     "type": "Adam",
     "args": {
-      "lr": 7e-5,
+      "lr": 9e-5,
       "betas": [0.9, 0.98]
     }
   },
@@ -62,10 +62,10 @@
   "lr_scheduler": {
     "type": "OneCycleLR",
     "args": {
-      "steps_per_epoch": 150,
+      "steps_per_epoch": 250,
       "epochs": 40,
       "anneal_strategy": "cos",
-      "max_lr": 7e-5,
+      "max_lr": 1e-4,
       "pct_start": 0.2
     }
   },
@@ -78,7 +78,8 @@
     "early_stop": 100,
     "writer": "wandb",
     "project_name": "tts",
-    "len_epoch": 150,
+    "len_epoch": 250,
     "grad_norm_clip": 10
-  }
+  },
+  "warm_start": "saved/models/default_config/1206_013623/checkpoint-epoch20.pth"
 }

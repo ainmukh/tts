@@ -98,10 +98,10 @@ class Trainer(BaseTrainer):
 
         self.optimizer.zero_grad()
         batch = self.model(batch)
-        if batch.durations.size() != batch.durations_pred.size():
-            print(batch.durations.size(), batch.durations_pred.size(), batch.tokens.size())
-            print(batch.transcript)
-            return
+        # if batch.durations.size() != batch.durations_pred.size():
+        #     print(batch.durations.size(), batch.durations_pred.size(), batch.tokens.size())
+        #     print(batch.transcript)
+        #     return
 
         melspec_loss, length_loss = self.criterion(batch)  # TODO
 

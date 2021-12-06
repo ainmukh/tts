@@ -21,6 +21,9 @@ class MSELossWrapper(MSELoss):
         # durations = torch.log1p_(batch.durations) * durations_mask
         # durations_pred = batch.durations_pred * durations_mask
         durations, durations_pred = torch.log1p_(batch.durations), batch.durations_pred
+        durations_len = min(durations.size(-1), durations_pred.size(-1))
+        durations = durations[:, :durations_len]
+        durations_pred = durations_pred[:, :durations_len]
         length_loss = super().forward(durations_pred, durations)
 
         return melspec_loss, length_loss
