@@ -17,7 +17,7 @@ class DurationPredictor(nn.Module):
         )
         self.ln2 = nn.LayerNorm(hidden_size)
 
-        self.dropout = nn.Dropout(p)
+        self.dropout = nn.Dropout(p=0.5)
         self.linear = nn.Linear(hidden_size, 1)
 
     def forward(self, x):

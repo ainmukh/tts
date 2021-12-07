@@ -25,9 +25,6 @@ class LengthRegulator(nn.Module):
             durations = batch.durations
         durations = durations.int()
 
-        # if self.training:
-            # durations = self.aligner(batch.waveform, batch.waveform_length, batch.transcript)
-            # scale by waveform domain
         # durations = (durations * batch.melspec_length.reshape(-1, 1)).int()
         silence_duration = (batch.melspec_length - durations.sum(-1)).reshape(-1, 1)
         durations = torch.cat((durations, silence_duration), 1).int()
