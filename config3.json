@@ -1,0 +1,85 @@
+{
+  "name": "config2",
+  "n_gpu": 1,
+  "preprocessing": {
+    "sr": 22050
+  },
+  "arch": {
+    "type": "FastSpeech",
+    "args": {
+      "n_layers": 6,
+      "vocabulary_size": 38,
+      "hidden_size": 384,
+      "attn_heads": 2,
+      "cnn_out_channels": 1536,
+      "kernel_size": 3,
+      "p": 0.1,
+      "n_mels": 80,
+      "groups": 1
+    }
+  },
+  "data": {
+    "train": {
+      "batch_size": 48,
+      "num_workers": 5,
+      "datasets": [
+        {
+          "type": "LJSpeechDataset",
+          "args": {
+            "max_audio_length": 20,
+            "max_text_length": 200,
+            "limit": -1
+          }
+        }
+      ]
+    },
+    "val": {
+      "batch_size": 32,
+      "num_workers": 5,
+      "datasets": [
+        {
+          "type": "LJSpeechDataset",
+          "args": {
+            "max_audio_length": 20,
+            "max_text_length": 200,
+            "limit": 96
+          }
+        }
+      ]
+    }
+  },
+  "optimizer": {
+    "type": "Adam",
+    "args": {
+      "lr": 9e-5,
+      "betas": [0.9, 0.98]
+    }
+  },
+  "loss": {
+    "type": "MSELoss",
+    "args": {}
+  },
+  "lr_scheduler": {
+    "type": "OneCycleLR",
+    "args": {
+      "steps_per_epoch": 250,
+      "epochs": 40,
+      "anneal_strategy": "cos",
+      "max_lr": 1e-4,
+      "pct_start": 0.2
+    }
+  },
+  "trainer": {
+    "epochs": 40,
+    "save_dir": "saved/",
+    "save_period": 5,
+    "verbosity": 2,
+    "monitor": "min val_loss",
+    "early_stop": 100,
+    "writer": "wandb",
+    "project_name": "tts",
+    "len_epoch": 250,
+    "grad_norm_clip": 10
+  },
+  "warm_start": "saved/models/config2/1206_081337/checkpoint-epoch35.pth"
+}
