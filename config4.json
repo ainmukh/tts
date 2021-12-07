@@ -74,7 +74,7 @@
     "save_dir": "saved/",
     "save_period": 5,
     "verbosity": 2,
-    "monitor": "min melspec_loss",
+    "monitor": "min val_loss",
     "early_stop": 100,
     "writer": "wandb",
     "project_name": "tts",
