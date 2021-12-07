@@ -65,7 +65,7 @@
       "steps_per_epoch": 255,
       "epochs": 40,
       "anneal_strategy": "cos",
-      "max_lr": 3e-4,
+      "max_lr": 5e-5,
       "pct_start": 0.2
     }
   },
